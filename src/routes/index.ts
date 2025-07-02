@@ -7,7 +7,7 @@ const router = Router();
 
 router.use('/auth', authRouter);
 router.use('/user', userRouter);
-router.use('/post', postRouter);
+router.use('/posts', postRouter);
 
 router.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
