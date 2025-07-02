@@ -1,40 +1,33 @@
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { AuthRequest } from '../types/jwt.js';
 import { createPost, getAllPosts } from '../services/post.service.js';
-import { handleControllerError } from '../utils/errorResponse.js';
+import { createError } from '../types/customError.js';
 
-export const createPostController = async (req: AuthRequest, res: Response) => {
+export const createPostController = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
     const { message } = req.body;
 
-    if (!userId) {
-      res.status(401).json({ error: 'User not authenticated.' });
-      return;
-    }
-    if (!message) {
-      res.status(400).json({ error: 'The message is required.' });
-      return;
-    }
+    if (!userId) throw createError('User not authenticated.', 401);
+
+    if (!message) throw createError('The message is required.', 400);
 
     const post = await createPost(userId, message);
 
     res.status(201).json(post);
   } catch (error) {
-    handleControllerError(res, error, 'Error when creating the publication.');
+    next(error);
   }
 };
 
-export const getPostsController = async (req: AuthRequest, res: Response) => {
+export const getPostsController = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: 'User not authenticated.' });
-      return;
-    }
+    if (!userId) throw createError('User not authenticated.', 401);
+
     const posts = await getAllPosts(userId);
     res.json(posts);
   } catch (error) {
-    handleControllerError(res, error, 'Error obtaining publications.');
+    next(error);
   }
 };

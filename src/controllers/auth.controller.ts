@@ -1,18 +1,14 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { loginUser } from '../services/auth.service.js';
-import { handleControllerError } from '../utils/errorResponse.js';
+import { createError } from '../types/customError.js';
 
-export const login = async (req: Request, res: Response) => {
-  const { alias, password } = req.body;
-  if (!alias || !password) {
-    res.status(400).json({ error: 'Alias and password are required.' });
-    return;
-  }
-
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const { alias, password } = req.body;
+    if (!alias || !password) throw createError('Alias and password are required.', 401);
     const result = await loginUser(alias, password);
     res.json(result);
   } catch (error) {
-    handleControllerError(res, error, 'Login failed.');
+    next(error);
   }
 };

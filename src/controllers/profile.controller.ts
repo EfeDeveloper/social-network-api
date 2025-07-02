@@ -1,15 +1,12 @@
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { AuthRequest } from '../types/jwt.js';
 import { getUserProfile } from '../services/profile.service.js';
-import { handleControllerError } from '../utils/errorResponse.js';
+import { createError } from '../types/customError.js';
 
-export const getProfile = async (req: AuthRequest, res: Response) => {
+export const getProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: 'User not authenticated.' });
-      return;
-    }
+    if (!userId) throw createError('User not authenticated.', 401);
 
     const user = await getUserProfile(userId);
 
@@ -20,6 +17,6 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
 
     res.json(user);
   } catch (error) {
-    handleControllerError(res, error, 'Error obtaining the profile.');
+    next(error);
   }
 };
