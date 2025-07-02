@@ -7,7 +7,6 @@ export interface JwtPayload {
   exp?: number;
 }
 
-// Así puedes extender el Request para tu middleware y controllers
 export interface AuthRequest extends Request {
   user?: JwtPayload;
 }

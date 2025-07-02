@@ -34,17 +34,18 @@ async function main() {
     const user = await prisma.user.create({ data });
     await prisma.post.create({
       data: {
-        message: `¡Hola! Soy ${user.firstName}`,
+        message: `Hello! I'm ${user.firstName}`,
         userId: user.id,
       },
     });
   }
-
-  console.log('Seed ejecutado con éxito');
+  // eslint-disable-next-line no-console
+  console.log('Seed successfully executed');
 }
 
 main()
   .catch((e) => {
+    // eslint-disable-next-line no-console
     console.error(e);
     process.exit(1);
   })

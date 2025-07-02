@@ -4,6 +4,6 @@ import { createPostController } from '../controllers/post.controller.js';
 
 const router = Router();
 
-router.post('/create', authenticateJWT, createPostController);
+router.post('/profile', authenticateJWT, createPostController);
 
 export default router;
