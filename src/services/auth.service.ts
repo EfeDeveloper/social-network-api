@@ -26,6 +26,7 @@ export const loginUser = async (alias: string, password: string) => {
       alias: user.alias,
       firstName: user.firstName,
       lastName: user.lastName,
+      birthDate: user.birthDate,
     },
   };
 };

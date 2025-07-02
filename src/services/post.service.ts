@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const createPost = async (userId: string, message: string) => {
-  return prisma.post.create({
+  const newPost = prisma.post.create({
     data: {
       message,
       userId,
@@ -11,11 +11,17 @@ export const createPost = async (userId: string, message: string) => {
     select: {
       id: true,
       message: true,
-      createdAt: true,
-      userId: true,
+      user: true,
       likes: true,
+      createdAt: true,
     },
   });
+
+  return {
+    ...newPost,
+    likesCount: newPost.likes.length,
+    likedByCurrentUser: false,
+  };
 };
 
 export const getAllPosts = async (currentUserId: string) => {
