@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { AuthRequest } from '../types/jwt.js';
-import { likePost } from '../services/like.service.js';
+import { toggleLikePost } from '../services/like.service.js';
 import { handleControllerError } from '../utils/errorResponse.js';
 
 export const likePostController = async (req: AuthRequest, res: Response) => {
@@ -13,15 +13,9 @@ export const likePostController = async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    const result = await likePost(postId, userId);
-
-    if ('alreadyLiked' in result) {
-      res.status(200).json({ message: 'You already like this publication.' });
-      return;
-    }
-
-    res.status(201).json(result);
+    const result = await toggleLikePost(postId, userId);
+    res.status(200).json(result);
   } catch (error) {
-    handleControllerError(res, error, 'Error when giving like.');
+    handleControllerError(res, error, 'Error when toggling like.');
   }
 };

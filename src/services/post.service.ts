@@ -18,27 +18,28 @@ export const createPost = async (userId: string, message: string) => {
   });
 };
 
-export const getAllPosts = async () => {
-  return prisma.post.findMany({
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      message: true,
-      createdAt: true,
+export const getAllPosts = async (currentUserId: string) => {
+  const posts = await prisma.post.findMany({
+    include: {
       user: {
         select: {
           id: true,
-          alias: true,
           firstName: true,
           lastName: true,
+          alias: true,
         },
       },
-      likes: {
-        select: {
-          id: true,
-          userId: true,
-        },
-      },
+      likes: { select: { userId: true } },
     },
+    orderBy: { createdAt: 'desc' },
   });
+
+  return posts.map((post) => ({
+    id: post.id,
+    message: post.message,
+    user: post.user,
+    likesCount: post.likes.length,
+    likedByCurrentUser: post.likes.some((like) => like.userId === currentUserId),
+    createdAt: post.createdAt,
+  }));
 };
