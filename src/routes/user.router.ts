@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { authenticateJWT } from '../middlewares/authenticateJWT.middleware.js';
-import { createPostController } from '../controllers/post.controller.js';
+import { getProfile } from '../controllers/profile.controller.js';
 
 const router = Router();
 
-router.post('/create', authenticateJWT, createPostController);
+router.get('/profile', authenticateJWT, getProfile);
 
 export default router;
