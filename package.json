@@ -16,8 +16,8 @@
     "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Edwin Villa",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.11.0",
