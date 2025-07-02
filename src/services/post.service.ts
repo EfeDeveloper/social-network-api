@@ -17,3 +17,28 @@ export const createPost = async (userId: string, message: string) => {
     },
   });
 };
+
+export const getAllPosts = async () => {
+  return prisma.post.findMany({
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      message: true,
+      createdAt: true,
+      user: {
+        select: {
+          id: true,
+          alias: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      likes: {
+        select: {
+          id: true,
+          userId: true,
+        },
+      },
+    },
+  });
+};
