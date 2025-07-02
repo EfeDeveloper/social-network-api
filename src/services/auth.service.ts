@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { createError } from '../types/customError.js';
 
 const prisma = new PrismaClient();
 
@@ -9,10 +10,10 @@ export const loginUser = async (alias: string, password: string) => {
     where: { alias },
   });
 
-  if (!user) throw new Error('Invalid email or password');
+  if (!user) throw createError('Invalid email aor password', 401);
 
   const validPassword = await bcrypt.compare(password, user.password);
-  if (!validPassword) throw new Error('Invalid email or password');
+  if (!validPassword) throw createError('Invalid email aor password', 401);
 
   const token = jwt.sign({ userId: user.id, alias: user.alias }, process.env.JWT_SECRET || '', {
     expiresIn: '4h',
