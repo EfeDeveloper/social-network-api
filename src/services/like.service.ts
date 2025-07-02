@@ -1,19 +1,26 @@
 import { PrismaClient } from '@prisma/client';
-
 const prisma = new PrismaClient();
 
-export const likePost = async (postId: string, userId: string) => {
+export const toggleLikePost = async (postId: string, userId: string) => {
   const exists = await prisma.like.findUnique({
     where: { userId_postId: { userId, postId } },
   });
 
+  let liked: boolean;
+
   if (exists) {
-    return { alreadyLiked: true };
+    await prisma.like.delete({
+      where: { userId_postId: { userId, postId } },
+    });
+    liked = false;
+  } else {
+    await prisma.like.create({
+      data: { userId, postId },
+    });
+    liked = true;
   }
 
-  const like = await prisma.like.create({
-    data: { userId, postId },
-  });
+  const likesCount = await prisma.like.count({ where: { postId } });
 
-  return like;
+  return { id: postId, liked, likesCount };
 };
