@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { AuthRequest } from '../types/jwt.js';
 import { createPost, getAllPosts } from '../services/post.service.js';
 import { handleControllerError } from '../utils/errorResponse.js';
@@ -25,9 +25,14 @@ export const createPostController = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const getPostsController = async (_req: Request, res: Response) => {
+export const getPostsController = async (req: AuthRequest, res: Response) => {
   try {
-    const posts = await getAllPosts();
+    const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({ error: 'User not authenticated.' });
+      return;
+    }
+    const posts = await getAllPosts(userId);
     res.json(posts);
   } catch (error) {
     handleControllerError(res, error, 'Error obtaining publications.');
